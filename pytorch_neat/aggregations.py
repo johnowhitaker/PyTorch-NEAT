@@ -24,7 +24,9 @@ def prod_aggregation(inputs):
     return reduce(mul, inputs, 1)
 
 
+
 str_to_aggregation = {
     'sum': sum_aggregation,
     'prod': prod_aggregation,
+    'product': prod_aggregation, # To match neat naming
 }
