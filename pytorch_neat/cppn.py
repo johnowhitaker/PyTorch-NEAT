@@ -45,7 +45,7 @@ class Node:
         self.leaves = leaves
         self.weights = weights
         self.response = response
-        self.bias = bias
+        self.bias = torch.tensor(bias)
         self.activation = activation
         self.activation_name = activation
         self.aggregation = aggregation
@@ -80,8 +80,11 @@ class Node:
             return torch.full(shape, self.bias)
         inputs = [w * x for w, x in zip(self.weights, xs)]
         try:
-            pre_activs = self.aggregation(inputs)
-            activs = self.activation(self.response * pre_activs + self.bias)
+            if len(self.children)>0:
+                pre_activs = self.aggregation(inputs)
+                activs = self.activation(self.response * pre_activs + self.bias)
+            else: # Handle output nodes with no input, only bias
+                activs = self.activation(self.bias).expand(shape)
             assert activs.shape == shape, "Wrong shape for node {}".format(self.name)
         except Exception:
             raise Exception("Failed to activate node {}".format(self.name))
